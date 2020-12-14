@@ -262,12 +262,6 @@ public class RequestProcessor implements Runnable {
         int fromUserId = (int) sendMix.getFromUser().getId();
         int toUserId = (int) sendMix.getToUser().getId();
 
-//        if(matesList.size() < 100) {
-//            for (int i = 0; i < 100; i++) {
-//                matesList.add(new ArrayList<User>());
-//            }
-//        }
-
         System.out.println("fromUserID和matelist的size分别是");
         System.out.println(fromUserId);
         System.out.println(matesList.size());
