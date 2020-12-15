@@ -52,7 +52,7 @@ public class LoginFrame extends JFrame {
     }
 
     public void init(){
-        this.setTitle("JQ登录");
+        this.setTitle("用户登录");
         this.setSize(330, 230);
         //设置默认窗体在屏幕中央
         int x = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -94,8 +94,8 @@ public class LoginFrame extends JFrame {
         btnPanel.setLayout(new BorderLayout());
         btnPanel.setBorder(new EmptyBorder(2, 8, 4, 8));
 
-        JButton registeBtn = new JButton("注册");
-        btnPanel.add(registeBtn, BorderLayout.WEST);
+        JButton registerBtn = new JButton("注册");
+        btnPanel.add(registerBtn, BorderLayout.WEST);
         JButton submitBtn = new JButton("登录");
         btnPanel.add(submitBtn, BorderLayout.EAST);
 
@@ -115,7 +115,7 @@ public class LoginFrame extends JFrame {
         });
 
         //注册
-        registeBtn.addActionListener(new ActionListener(){
+        registerBtn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 new RegisterFrame();  //打开注册窗体
             }
@@ -167,6 +167,7 @@ public class LoginFrame extends JFrame {
             User user2 = (User)response.getData("user");
             if(user2!= null){ //登录成功
                 DataBuffer.currentUser = user2;
+
                 //获取当前在线用户列表
                 DataBuffer.onlineUsers = (List<User>)response.getData("onlineUsers");
 
@@ -176,8 +177,6 @@ public class LoginFrame extends JFrame {
                         DataBuffer.matesListModels.add(new MatesListModel());
                     }
                 }
-//                System.out.print("mateslist的size是："+DataBuffer.matesList.size());
-//                System.out.print("mateslistmodel的size是："+DataBuffer.matesListModels.size());
                 LoginFrame.this.dispose();
                 new ChatFrame();  //打开聊天窗体
             }else{ //登录失败

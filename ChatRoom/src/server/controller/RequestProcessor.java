@@ -50,6 +50,7 @@ public class RequestProcessor implements Runnable {
                 matesList.add(new ArrayList<User>());
             }
         }
+
         try {
             OnlineClientIOCache currentClientIOCache = new OnlineClientIOCache(
                     new ObjectInputStream(currentClientSocket.getInputStream()),
@@ -145,6 +146,7 @@ public class RequestProcessor implements Runnable {
                 + ":" + currentClientSocket.getPort() + "走了");
 
         User user = (User) request.getAttribute("user");
+
         //把当前上线客户端的IO从Map中删除
         DataBuffer.onlineUserIOCacheMap.remove(user.getId());
         //从在线用户缓存Map中删除当前用户
@@ -262,15 +264,12 @@ public class RequestProcessor implements Runnable {
         int fromUserId = (int) sendMix.getFromUser().getId();
         int toUserId = (int) sendMix.getToUser().getId();
 
-        System.out.println("fromUserID和matelist的size分别是");
-        System.out.println(fromUserId);
-        System.out.println(matesList.size());
-
         Response response = new Response();
         response.setType(ResponseType.AGREESENDMIX);
         response.setStatus(ResponseStatus.OK);
         response.setData("sendMix",sendMix);
 
+        // 存储好友列表信息到数据库中
         User testUser1 = sendMix.getFromUser();
         User testUser2 = sendMix.getToUser();
         testUser1.addMate(testUser2);

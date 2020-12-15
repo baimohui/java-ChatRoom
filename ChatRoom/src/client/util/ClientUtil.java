@@ -14,6 +14,8 @@ import client.DataBuffer;
 import client.ui.ChatFrame;
 import common.model.entity.Request;
 import common.model.entity.Response;
+import common.model.entity.User;
+import server.model.service.UserService;
 
 import java.io.IOException;
 
@@ -62,6 +64,15 @@ public class ClientUtil {
 
     /** 把指定文本添加到消息列表文本域中 */
     public static void appendTxt2MsgListArea(String txt) {
+        ChatFrame.msgListArea.append(txt);
+        //把光标定位到文本域的最后一行
+        ChatFrame.msgListArea.setCaretPosition(ChatFrame.msgListArea.getDocument().getLength());
+    }
+
+    public static void appendTxt2MsgListArea(String txt, User user) {
+        user.addRecord(txt);
+        UserService userService = new UserService();
+        userService.saveUser(user);
         ChatFrame.msgListArea.append(txt);
         //把光标定位到文本域的最后一行
         ChatFrame.msgListArea.setCaretPosition(ChatFrame.msgListArea.getDocument().getLength());

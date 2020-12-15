@@ -30,12 +30,14 @@ public class User implements Serializable {
     private int head;
     private char sex;
     private List<User> mateList;
+    private List<String> chatRecords;
 
     public User(String password, String nickname, char sex, int head){
         this.password = password;
         this.sex = sex;
         this.head = head;
         this.mateList = new ArrayList<User>(100);
+        this.chatRecords = new ArrayList<String>(300);
         if(nickname.equals("")||nickname==null)
         {
             this.nickname = "未命名";
@@ -97,10 +99,10 @@ public class User implements Serializable {
     public void setMateList(List<User> mateList) {this.mateList=mateList; };
 
     public void addMate(User user) {
-        if(mateList == null) {
-            mateList = new ArrayList<User>(100);
+        if(this.mateList == null) {
+            this.mateList = new ArrayList<User>(100);
         }
-        if(mateList.contains(user)) {
+        if(this.mateList.contains(user)) {
             return;
         }
         this.mateList.add(user);
@@ -111,6 +113,30 @@ public class User implements Serializable {
     }
 
     public List<User> getMateList() { return this.mateList;}
+
+    // 查看要检验的用户是否已存在自身的好友列表中
+    public boolean testMateId(User testUser) {
+        for(User mate: this.mateList) {
+            if(mate.getId()== testUser.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addRecord(String str) {
+        if(this.chatRecords == null) {
+            this.chatRecords = new ArrayList<String>(300);
+//            for (int i = 0; i < 100; i++) {
+//                chatRecords.add("");
+//            }
+        }
+        this.chatRecords.add(str);
+    }
+
+    public List<String> getChatRecords() {
+        return this.chatRecords;
+    }
 
     public ImageIcon getHeadIcon(){
         ImageIcon image = new ImageIcon("images/"+head+".png");

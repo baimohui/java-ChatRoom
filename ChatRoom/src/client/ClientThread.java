@@ -18,6 +18,7 @@ import client.util.JFrameShaker;
 import common.model.entity.*;
 import common.util.IOUtil;
 import common.util.SocketUtil;
+import server.model.service.UserService;
 
 import javax.swing.*;
 import java.io.*;
@@ -41,8 +42,6 @@ public class ClientThread extends Thread {
     public ClientThread(JFrame frame){
         currentFrame = frame;
     }
-//    MatesListModel matesListModel;
-//                matesListModel = new MatesListModel(DataBuffer.matesList.get(currentId-1));
     public void run() {
         try {
             while (DataBuffer.clientSeocket.isConnected()) {
@@ -55,31 +54,31 @@ public class ClientThread extends Thread {
                     DataBuffer.onlineUserListModel.addElement(newUser);
                     ChatFrame.onlineCountLbl.setText(
                             "在线用户列表("+ DataBuffer.onlineUserListModel.getSize() +")");
-                    ClientUtil.appendTxt2MsgListArea("【系统消息】用户"+newUser.getNickname() + "上线了！\n");
+                    ClientUtil.appendTxt2MsgListArea("【系统消息】用户"+newUser.getNickname() + "上线了！\n", currentUser);
                 }else if(type == ResponseType.LOGOUT){
                     User newUser = (User)response.getData("logoutUser");
                     DataBuffer.onlineUserListModel.removeElement(newUser);
                     ChatFrame.onlineCountLbl.setText(
                             "在线用户列表("+ DataBuffer.onlineUserListModel.getSize() +")");
-                    ClientUtil.appendTxt2MsgListArea("【系统消息】用户"+newUser.getNickname() + "下线了！\n");
+                    ClientUtil.appendTxt2MsgListArea("【系统消息】用户"+newUser.getNickname() + "下线了！\n", currentUser);
                 }else if(type == ResponseType.CHAT){ //聊天
                     Message msg = (Message)response.getData("txtMsg");
-                    ClientUtil.appendTxt2MsgListArea(msg.getMessage());
+                    ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
                 }else if(type == ResponseType.SHAKE){ //振动
                     Message msg = (Message)response.getData("ShakeMsg");
-                    ClientUtil.appendTxt2MsgListArea(msg.getMessage());
+                    ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
                     new JFrameShaker(this.currentFrame).startShake();
                 }else if(type == ResponseType.TOSENDFILE){ //准备发送文件
                     toSendFile(response);
                 }else if(type == ResponseType.AGREERECEIVEFILE){ //对方同意接收文件
                     sendFile(response);
                 }else if(type == ResponseType.REFUSERECEIVEFILE){ //对方拒绝接收文件
-                    ClientUtil.appendTxt2MsgListArea("【文件消息】对方拒绝接收，文件发送失败！\n");
+                    ClientUtil.appendTxt2MsgListArea("【文件消息】对方拒绝接收，文件发送失败！\n", currentUser);
                 }else if(type == ResponseType.RECEIVEFILE){ //开始接收文件
                     receiveFile(response);
                 }else if(type == ResponseType.BOARD){
                     Message msg = (Message)response.getData("txtMsg");
-                    ClientUtil.appendTxt2MsgListArea(msg.getMessage());
+                    ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
                 }else if(type == ResponseType.REMOVE){
                     ChatFrame.remove();
                 }else if(type == ResponseType.TOSENDMIX){ //发送好友申请
@@ -98,7 +97,7 @@ public class ClientThread extends Thread {
     }
 
     /**
-     * 发送好友申请
+     * 客户端接收到其它用户发来的好友申请
      */
     private void toSendMix(Response response) throws IOException {
         Message sendMix = (Message)response.getData("sendMix");
@@ -110,10 +109,10 @@ public class ClientThread extends Thread {
             request.setAttribute("sendMix", sendMix);
             if(select == JOptionPane.YES_OPTION) {
                 request.setAction("agreeSendMix");
-                ClientUtil.appendTxt2MsgListArea("【系统消息】您已成功添加对方为好友。\n");
+                ClientUtil.appendTxt2MsgListArea("【系统消息】您已成功添加"+fromName+"为好友。\n", currentUser);
             } else {
                 request.setAction("refuseSendMix");
-                ClientUtil.appendTxt2MsgListArea("【系统消息】您已拒绝对方的好友申请。\n");
+                ClientUtil.appendTxt2MsgListArea("【系统消息】您已拒绝"+fromName+"的好友申请。\n", currentUser);
             }
             ClientUtil.sendTextRequest2(request);
     }
@@ -133,6 +132,9 @@ public class ClientThread extends Thread {
                 MatesListModel matesListModel2 = matesListModels.get(fromUserId-1);
                 matesListModel2.addElement(sendMix.getToUser());
                 matesListModels.set(fromUserId-1, matesListModel2);
+                String str = "【系统消息】"+sendMix.getToUser().getNickname()+"已同意添加您为好友。\n";
+                ClientUtil.appendTxt2MsgListArea(str, currentUser);
+
                 System.out.println(sendMix.getFromUser().getNickname()+"当前好友列表为"+matesListModel2.getmateList());
             } else if(currentUser.getId()==sendMix.getToUser().getId()) {
                 MatesListModel matesListModel = matesListModels.get(toUserId-1);
@@ -187,7 +189,7 @@ public class ClientThread extends Thread {
             }
             bos.flush();
             synchronized (this) {
-                ClientUtil.appendTxt2MsgListArea("【文件消息】文件发送完毕!\n");
+                ClientUtil.appendTxt2MsgListArea("【文件消息】文件发送完毕!\n", currentUser);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -219,7 +221,7 @@ public class ClientThread extends Thread {
             bos.flush();
             synchronized (this) {
                 ClientUtil.appendTxt2MsgListArea("【文件消息】文件接收完毕!存放在["
-                        + sendFile.getDestName()+"]\n");
+                        + sendFile.getDestName()+"]\n", currentUser);
             }
 
         } catch (IOException e) {
@@ -262,16 +264,16 @@ public class ClientThread extends Thread {
                     request.setAction("agreeReceiveFile");
 //                    receiveFile(response);
                     ClientUtil.appendTxt2MsgListArea("【文件消息】您已同意接收来自 "
-                            + fromName +" 的文件，正在接收文件 ...\n");
+                            + fromName +" 的文件，正在接收文件 ...\n", currentUser);
                 } else {
                     request.setAction("refuseReceiveFile");
                     ClientUtil.appendTxt2MsgListArea("【文件消息】您已拒绝接收来自 "
-                            + fromName +" 的文件!\n");
+                            + fromName +" 的文件!\n", currentUser);
                 }
             } else {
                 request.setAction("refuseReceiveFile");
                 ClientUtil.appendTxt2MsgListArea("【文件消息】您已拒绝接收来自 "
-                        + fromName +" 的文件!\n");
+                        + fromName +" 的文件!\n", currentUser);
             }
             ClientUtil.sendTextRequest2(request);
         } catch (IOException e) {

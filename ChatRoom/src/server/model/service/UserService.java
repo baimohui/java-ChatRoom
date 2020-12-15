@@ -47,7 +47,19 @@ public class UserService {
         saveAllUser(users);
     }
 
-    /** 保存两个用户信息 */
+    /** 保存用户信息 */
+    public void saveUser(User savedUser) {
+        List<User> users = loadAllUser();
+        for (User user : users) {
+            if(savedUser.testMateId(user)){
+                users.set((int)savedUser.getId()-1, savedUser);
+                break;
+            }
+        }
+        saveAllUser(users);
+    }
+
+    /** 重载 保存两个用户信息 */
     public void saveUser(User savedUser1, User savedUser2) {
         List<User> users = loadAllUser();
         for (User user : users) {
@@ -71,6 +83,7 @@ public class UserService {
         for (User user : users) {
             if(id == user.getId() && password.equals(user.getPassword())){
                 result = user;
+
                 break;
             }
         }
@@ -131,10 +144,8 @@ public class UserService {
         System.out.println("UserService的user初始化");
 //        User user = new User("admin", "Admin", 'm', 0);
 //        user.setId(1);
-//
 //        User user2 = new User("123", "yong", 'm', 1);
 //        user2.setId(2);
-//
 //        User user3 = new User("123", "anni", 'f', 2);
 //        user3.setId(3);
 //
@@ -143,10 +154,10 @@ public class UserService {
 //        users.add(user2);
 //        users.add(user3);
 
-        User user1 = this.loadUser(4);
+//        User user1 = this.loadUser(1);
 //        User user2 = this.loadUser(2);
 //        User user3 = this.loadUser(3);
-        this.delUser(user1);
+//        this.delUser(user1);
 //        this.delUser(user2);
 //        this.delUser(user3);
 //        this.saveAllUser(users);
@@ -157,6 +168,7 @@ public class UserService {
         List<User> users = new UserService().loadAllUser();
         for (User user : users) {
             System.out.println(user);
+            System.out.println(user.getChatRecords());
         }
     }
 }

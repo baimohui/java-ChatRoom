@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static client.DataBuffer.currentUser;
 import static client.DataBuffer.matesListModels;
 
 /**
@@ -92,6 +93,9 @@ public class ChatFrame extends JFrame {
         this.setTitle("JX聊天室");
         this.setSize(550, 500);
         this.setResizable(false);
+        User currentUser = DataBuffer.currentUser;
+        System.out.println("测试"+currentUser.getNickname());
+        System.out.println(currentUser.getChatRecords());
 
         // 设置默认窗体在屏幕中央
         int x = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -131,6 +135,9 @@ public class ChatFrame extends JFrame {
         infoPanel.add(otherInfoLbl, BorderLayout.NORTH);
 
         msgListArea = new JTextArea();
+        for(String record:currentUser.getChatRecords()) {
+            msgListArea.append(record);
+        }
         msgListArea.setLineWrap(true);
         infoPanel.add(new JScrollPane(msgListArea,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -145,17 +152,17 @@ public class ChatFrame extends JFrame {
         btnPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         tempPanel.add(btnPanel, BorderLayout.CENTER);
 
-        // 字体按钮
-        JButton fontBtn = new JButton(new ImageIcon("images/font.png"));
-        fontBtn.setMargin(new Insets(0, 0, 0, 0));
-        fontBtn.setToolTipText("设置字体和格式");
-        btnPanel.add(fontBtn);
+        // 注销账号按钮
+        JButton cancellBtn = new JButton(new ImageIcon("images/font.png"));
+        cancellBtn.setMargin(new Insets(0, 0, 0, 0));
+        cancellBtn.setToolTipText("注销账号");
+        btnPanel.add(cancellBtn);
 
-        // 表情按钮
-        JButton faceBtn = new JButton(new ImageIcon("images/sendFace.png"));
-        faceBtn.setMargin(new Insets(0, 0, 0, 0));
-        faceBtn.setToolTipText("添加好友");
-        btnPanel.add(faceBtn);
+        // 添加好友按钮
+        JButton mixBtn = new JButton(new ImageIcon("images/sendFace.png"));
+        mixBtn.setMargin(new Insets(0, 0, 0, 0));
+        mixBtn.setToolTipText("添加好友");
+        btnPanel.add(mixBtn);
 
         // 发送窗口振动按钮
         JButton shakeBtn = new JButton(new ImageIcon("images/shake.png"));
@@ -325,7 +332,7 @@ public class ChatFrame extends JFrame {
         //发送文件
         sendFileBtn.addActionListener(event -> sendFile());
 
-        faceBtn.addActionListener(e -> toMix());
+        mixBtn.addActionListener(e -> toMix());
 
         this.loadData();  //加载初始数据
     }
@@ -363,7 +370,10 @@ public class ChatFrame extends JFrame {
             if (DataBuffer.currentUser.getId() == selectedUser.getId()) {
                 JOptionPane.showMessageDialog(ChatFrame.this, "不能将自己添加为好友!",
                         "请求失败", JOptionPane.ERROR_MESSAGE);
-            } else {
+            } else if(DataBuffer.currentUser.testMateId(selectedUser)) {
+                JOptionPane.showMessageDialog(ChatFrame.this, "对方已在您的好友列表中!",
+                        "请求失败", JOptionPane.ERROR_MESSAGE);
+            } else{
                 sendMix = new Message();
                 sendMix.setFromUser(DataBuffer.currentUser);
                 sendMix.setToUser(selectedUser);
@@ -378,7 +388,7 @@ public class ChatFrame extends JFrame {
                 }
                 ClientUtil.appendTxt2MsgListArea("【系统消息】已向用户 "
                         + selectedUser.getNickname() + "("
-                        + selectedUser.getId() + ") 发送添加好友申请，等待对方同意...\n");
+                        + selectedUser.getId() + ") 发送添加好友申请，等待对方同意...\n", currentUser);
             }
         } else {
             JOptionPane.showMessageDialog(ChatFrame.this, "请选中要添加好友的对象！",
@@ -410,7 +420,7 @@ public class ChatFrame extends JFrame {
                 }
                 ClientUtil.appendTxt2MsgListArea("【系统消息】您已将用户 "
                         + selectedUser.getNickname() + "("
-                        + selectedUser.getId() + ") 从好友列表中删除\n");
+                        + selectedUser.getId() + ") 从好友列表中删除\n", currentUser);
             }
         }else {
             JOptionPane.showMessageDialog(ChatFrame.this, "请选中要删除的好友对象!",
@@ -468,7 +478,7 @@ public class ChatFrame extends JFrame {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ClientUtil.appendTxt2MsgListArea(msg.getMessage());
+                ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
                 new JFrameShaker(ChatFrame.this).startShake();
             }
         } else {
@@ -540,7 +550,7 @@ public class ChatFrame extends JFrame {
                 }
             });
             sendArea.setText("");
-            ClientUtil.appendTxt2MsgListArea(msg.getMessage());
+            ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
         }
     }
 
@@ -579,7 +589,7 @@ public class ChatFrame extends JFrame {
                     ClientUtil.appendTxt2MsgListArea("【文件消息】向 "
                             + selectedUser.getNickname() + "("
                             + selectedUser.getId() + ") 发送文件 ["
-                            + file.getName() + "]，等待对方接收...\n");
+                            + file.getName() + "]，等待对方接收...\n", currentUser);
                 }
             }
         } else {
