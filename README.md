@@ -26,7 +26,7 @@ Java Socket 通信实现的聊天室
 
 2. 首先运行服务端代码（ChatRoom\src\server\MainServer.java）。
 
-   ![server](https://github.com/baimohui/java-/blob/main/des-pics/image-20201215154543001.png)
+   <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215154543001.png" alt="server" width=50% />
 
 3. 然后运行客户端代码（ChatRoom\src\client\ClientThread.java），每次运行都相当于创建一个新的用户进程。
 
