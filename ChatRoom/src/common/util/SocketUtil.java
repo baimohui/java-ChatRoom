@@ -1,13 +1,3 @@
-/**
- * Copyright (C), 2015-2019, XXX有限公司
- * FileName: SocketUtil
- * Author:   ITryagain
- * Date:     2019/5/16 20:17
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- */
 package common.util;
 
 import java.io.IOException;

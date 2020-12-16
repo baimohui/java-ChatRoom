@@ -1,13 +1,3 @@
-/**
- * Copyright (C), 2015-2019, XXX有限公司
- * FileName: ClientMain
- * Author:   ITryagain
- * Date:     2019/5/16 20:25
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- */
 package client;
 
 import client.ui.LoginFrame;

@@ -1,13 +1,3 @@
-/**
- * Copyright (C), 2015-2019, XXX有限公司
- * FileName: ServerInfoFrame
- * Author:   ITryagain
- * Date:     2019/5/15 18:30
- * Description: 服务器信息窗体
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- */
 package server.ui;
 
 import common.model.entity.User;

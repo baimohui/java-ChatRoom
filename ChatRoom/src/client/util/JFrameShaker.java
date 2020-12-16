@@ -1,13 +1,3 @@
-/**
- * Copyright (C), 2015-2019, XXX有限公司
- * FileName: JFrameShaker
- * Author:   ITryagain
- * Date:     2019/5/16 20:24
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- */
 package client.util;
 
 import javax.swing.*;
@@ -19,9 +9,6 @@ import java.awt.event.ActionListener;
  * 〈一句话功能简述〉<br> 
  * 〈窗口振动器〉
  *
- * @author ITryagain
- * @create 2019/5/16
- * @since 1.0.0
  */
 
 public class JFrameShaker {

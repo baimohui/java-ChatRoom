@@ -1,13 +1,3 @@
-/**
- * Copyright (C), 2015-2019, XXX有限公司
- * FileName: DataBuffer
- * Author:   ITryagain
- * Date:     2019/5/15 17:32
- * Description: 服务器端数据缓存
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
- */
 package server;
 
 import common.model.entity.User;

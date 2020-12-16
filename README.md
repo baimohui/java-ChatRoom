@@ -43,7 +43,10 @@ Java Socket 通信实现的聊天室
    右侧分为三个部分：在线用户列表、好友列表、当前用户。选中一个在线用户后点击右键可以向对方请求添加好友，选中一个好友后点击右键可以删除好友。
 
    <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215160108670.png" width=40% />
+<<<<<<< HEAD
 
+=======
+>>>>>>> dcd1c305ab5475f00ad679f1f2f75f7b587d3e3b
    
 
 
