@@ -26,11 +26,11 @@ Java Socket 通信实现的聊天室
 
 2. 首先运行服务端代码（ChatRoom\src\server\MainServer.java）。
 
-   <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215154543001.png" alt="server" width=50% />
+   <img src=".\des-pics\image-20201215154543001.png" width=50%/>
 
 3. 然后运行客户端代码（ChatRoom\src\client\ClientThread.java），每次运行都相当于创建一个新的用户进程。
 
-   <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215155603532.png" alt="client" width=25% />
+   <img src=".\des-pics\image-20201215155603532.png" alt="client" width=25% />
 
 4. 用户服务管理代码（ChatRoom\src\server\model\service\UserService）。可以通过运行它来手动修改用户信息，非必要。
 
@@ -42,12 +42,8 @@ Java Socket 通信实现的聊天室
 
    右侧分为三个部分：在线用户列表、好友列表、当前用户。选中一个在线用户后点击右键可以向对方请求添加好友，选中一个好友后点击右键可以删除好友。
 
-   <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215160108670.png" width=40% />
-<<<<<<< HEAD
+   <img src=".\des-pics\image-20201215160108670.png" width=40% />
 
-=======
->>>>>>> dcd1c305ab5475f00ad679f1f2f75f7b587d3e3b
-   
 
 
 
