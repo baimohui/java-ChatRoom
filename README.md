@@ -1,4 +1,4 @@
-# Chat_Room
+# java多功能聊天室
 Java Socket 通信实现的聊天室  
 
 
@@ -22,15 +22,15 @@ Java Socket 通信实现的聊天室
 
 ## 使用基本说明
 
-1. 代码建议在IntelliJ IDEA上运行。在eclipse上运行中文可能出现乱码。
+1. 不要将整个项目导入，导入ChatRoom文件夹即可。代码建议在IntelliJ IDEA上运行，在eclipse上运行中文可能出现乱码。
 
 2. 首先运行服务端代码（ChatRoom\src\server\MainServer.java）。
 
-   <img src="C:\Users\ABC\AppData\Roaming\Typora\typora-user-images\image-20201215154543001.png" alt="image-20201215154543001" style="zoom: 50%;" />
+   <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215154543001.png" alt="server" width=50% />
 
 3. 然后运行客户端代码（ChatRoom\src\client\ClientThread.java），每次运行都相当于创建一个新的用户进程。
 
-   <img src="C:\Users\ABC\AppData\Roaming\Typora\typora-user-images\image-20201215155603532.png" alt="image-20201215155603532" style="zoom: 67%;" />
+   <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215155603532.png" alt="client" width=25% />
 
 4. 用户服务管理代码（ChatRoom\src\server\model\service\UserService）。可以通过运行它来手动修改用户信息，非必要。
 
@@ -42,7 +42,7 @@ Java Socket 通信实现的聊天室
 
    右侧分为三个部分：在线用户列表、好友列表、当前用户。选中一个在线用户后点击右键可以向对方请求添加好友，选中一个好友后点击右键可以删除好友。
 
-   <img src="C:\Users\ABC\AppData\Roaming\Typora\typora-user-images\image-20201215160108670.png" alt="image-20201215160108670" style="zoom:67%;" />
+   <img src="https://github.com/baimohui/java-/blob/main/des-pics/image-20201215160108670.png" width=40% />
 
    
 
@@ -59,8 +59,4 @@ Java Socket 通信实现的聊天室
    ......
 
 项目还在更新和完善中，欢迎关注。
-
-
-
-
 
