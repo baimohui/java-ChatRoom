@@ -4,10 +4,7 @@ import common.model.entity.User;
 import common.util.IOUtil;
 import server.DataBuffer;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,35 +20,35 @@ public class UserService {
 
     /** 新增用户 */
     public void addUser(User user){
-        idCount = this.loadAllUser().size();
+        List<User> users = this.loadAllUser();
+        idCount = users.size();
         user.setId(++idCount);
-        List<User> users = loadAllUser();
         users.add(user);
-        saveAllUser(users);
+        this.saveAllUser(users);
     }
 
     /** 删除用户 */
     public void delUser(User user){
-        List<User> users = loadAllUser();
+        List<User> users = this.loadAllUser();
         users.remove(user);
-        saveAllUser(users);
+        this.saveAllUser(users);
     }
 
     /** 保存用户信息 */
     public void saveUser(User savedUser) {
-        List<User> users = loadAllUser();
+        List<User> users = this.loadAllUser();
         for (User user : users) {
-            if(savedUser.testMateId(user)){
+            if(savedUser.getId()==user.getId()) {
                 users.set((int)savedUser.getId()-1, savedUser);
                 break;
             }
         }
-        saveAllUser(users);
+        this.saveAllUser(users);
     }
 
     /** 重载 保存两个用户信息 */
     public void saveUser(User savedUser1, User savedUser2) {
-        List<User> users = loadAllUser();
+        List<User> users = this.loadAllUser();
         for (User user : users) {
             int i=0;
             if(savedUser1.getId() == user.getId()){
@@ -69,14 +66,14 @@ public class UserService {
     /** 用户登录 */
     public User login(long id, String password){
         User result = null;
-        List<User> users = loadAllUser();
+        List<User> users = this.loadAllUser();
         for (User user : users) {
             if(id == user.getId() && password.equals(user.getPassword())){
                 result = user;
-
                 break;
             }
         }
+        this.saveAllUser(users);
         return result;
     }
 
@@ -98,14 +95,25 @@ public class UserService {
     @SuppressWarnings("unchecked")
     public List<User> loadAllUser() {
         List<User> list = null;
+        list = new ArrayList<User>(100);
         ObjectInputStream ois = null;
         try {
             ois = new ObjectInputStream(
                     new FileInputStream(
                             DataBuffer.configProp.getProperty("dbpath")));
-
-            list = (List<User>)ois.readObject();
+            Object obj;
+            obj = ois.readObject();
+            System.out.println("输入流："+obj);
+            while(obj!=null) {
+                list = (List<User>) obj;
+                System.out.println("obj:"+obj);
+                System.out.println("list:"+list);
+                //这里一定要补上break，不然会出现readObject()方法的EOF异常。
+                // 在成功读取对象之后，还会再读一次，因为一次性就已经全部读出，此时已经没有东西可读，所以只能对其中断。
+                break;
+            };
         } catch (Exception e) {
+            System.out.println("果然是这里读取失败了2");
             e.printStackTrace();
         }finally{
             IOUtil.close(ois);
@@ -121,8 +129,10 @@ public class UserService {
                             DataBuffer.configProp.getProperty("dbpath")));
             //写回用户信息
             oos.writeObject(users);
+//            oos.writeObject(null);
             oos.flush();
         } catch (Exception e) {
+            System.out.println("saveAllUser ERROR!!!");
             e.printStackTrace();
         }finally{
             IOUtil.close(oos);
@@ -132,17 +142,17 @@ public class UserService {
     /** 初始化几个测试用户 */
     public void initUser(){
         System.out.println("UserService的user初始化");
-//        User user = new User("admin", "Admin", 'm', 0);
-//        user.setId(1);
-//        User user2 = new User("123", "yong", 'm', 1);
-//        user2.setId(2);
-//        User user3 = new User("123", "anni", 'f', 2);
-//        user3.setId(3);
-//
-//        List<User> users = new CopyOnWriteArrayList<User>();
-//        users.add(user);
-//        users.add(user2);
-//        users.add(user3);
+        User user = new User("2000", "张三", 'm', 1);
+        user.setId(1);
+        User user2 = new User("2000", "李四", 'm', 4);
+        user2.setId(2);
+        User user3 = new User("2000", "王五", 'm', 2);
+        user3.setId(3);
+
+        List<User> users = new CopyOnWriteArrayList<User>();
+        users.add(user);
+        users.add(user2);
+        users.add(user3);
 
 //        User user1 = this.loadUser(1);
 //        User user2 = this.loadUser(2);
@@ -150,12 +160,13 @@ public class UserService {
 //        this.delUser(user1);
 //        this.delUser(user2);
 //        this.delUser(user3);
-//        this.saveAllUser(users);
+        this.saveAllUser(users);
     }
 
     public static void main(String[] args){
         new UserService().initUser();
         List<User> users = new UserService().loadAllUser();
+        new UserService().saveAllUser(users);
         for (User user : users) {
             System.out.println(user);
             System.out.println(user.getChatRecords());

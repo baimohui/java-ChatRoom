@@ -11,6 +11,7 @@ import common.model.entity.FileInfo;
 import common.model.entity.Message;
 import common.model.entity.Request;
 import common.model.entity.User;
+import server.model.service.UserService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,8 +85,9 @@ public class ChatFrame extends JFrame {
         this.setSize(550, 500);
         this.setResizable(false);
         User currentUser = DataBuffer.currentUser;
-        System.out.println("测试"+currentUser.getNickname());
-        System.out.println(currentUser.getChatRecords());
+        System.out.println("currentUser："+currentUser);
+        System.out.println("currentUser昵称："+currentUser.getNickname());
+        System.out.println("currentUser聊天记录："+currentUser.getChatRecords());
 
         // 设置默认窗体在屏幕中央
         int x = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -142,15 +144,15 @@ public class ChatFrame extends JFrame {
         btnPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         tempPanel.add(btnPanel, BorderLayout.CENTER);
 
-        // 注销账号按钮
-        JButton cancellBtn = new JButton(new ImageIcon("images/font.png"));
-        cancellBtn.setMargin(new Insets(0, 0, 0, 0));
-        cancellBtn.setToolTipText("注销账号");
-        btnPanel.add(cancellBtn);
+        // 清空聊天信息按钮
+        JButton cancelBtn = new JButton(new ImageIcon("images/font.png"));
+        cancelBtn.setMargin(new Insets(0, 0, 0, 0));
+        cancelBtn.setToolTipText("清空聊天信息");
+        btnPanel.add(cancelBtn);
 
         // 添加好友按钮
         JButton mixBtn = new JButton(new ImageIcon("images/sendFace.png"));
-        mixBtn.setMargin(new Insets(0, 0, 0, 0));
+        mixBtn.setMargin(new Insets(0, 0 , 0, 0));
         mixBtn.setToolTipText("添加好友");
         btnPanel.add(mixBtn);
 
@@ -311,18 +313,14 @@ public class ChatFrame extends JFrame {
                 sendTxtMsg();
             }
         });
-
         //发送振动
-        shakeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                sendShakeMsg();
-            }
-        });
-
+        shakeBtn.addActionListener(event -> sendShakeMsg());
         //发送文件
         sendFileBtn.addActionListener(event -> sendFile());
-
+        //发送添加好友请求
         mixBtn.addActionListener(e -> toMix());
+        //清空聊天信息
+        cancelBtn.addActionListener(e -> cancel());
 
         this.loadData();  //加载初始数据
     }
@@ -436,6 +434,16 @@ public class ChatFrame extends JFrame {
     }
 
     /**
+     * 清空聊天记录
+     */
+    public void cancel() {
+        msgListArea.setText("");
+        currentUser.clearChatRecords();
+        UserService userService = new UserService();
+        userService.saveUser(currentUser);
+    }
+
+    /**
      * 发送振动
      */
     public void sendShakeMsg() {
@@ -533,14 +541,13 @@ public class ChatFrame extends JFrame {
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), transferTextActionKey);
             actionMap.put(transferTextActionKey, new AbstractAction() {
                 private static final long serialVersionUID = 7041841945830590229L;
-
                 public void actionPerformed(ActionEvent e) {
                     sendArea.setText("");
                     sendArea.requestFocus();
                 }
             });
             sendArea.setText("");
-            ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
+//            ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
         }
     }
 

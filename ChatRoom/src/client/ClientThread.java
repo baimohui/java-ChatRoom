@@ -47,13 +47,20 @@ public class ClientThread extends Thread {
                     ClientUtil.appendTxt2MsgListArea("【系统消息】用户"+newUser.getNickname() + "上线了！\n", currentUser);
                 }else if(type == ResponseType.LOGOUT){
                     User newUser = (User)response.getData("logoutUser");
+                    //退出前保存聊天记录
+                    if(currentUser.getId()==newUser.getId()) {
+                        UserService userService = new UserService();
+                        System.out.println("退出前有保存聊天记录吗！" + currentUser.getChatRecords());
+                        userService.saveUser(currentUser);
+                    }
                     DataBuffer.onlineUserListModel.removeElement(newUser);
                     ChatFrame.onlineCountLbl.setText(
-                            "在线用户列表("+ DataBuffer.onlineUserListModel.getSize() +")");
-                    ClientUtil.appendTxt2MsgListArea("【系统消息】用户"+newUser.getNickname() + "下线了！\n", currentUser);
+                            "在线用户列表(" + DataBuffer.onlineUserListModel.getSize() + ")");
                 }else if(type == ResponseType.CHAT){ //聊天
                     Message msg = (Message)response.getData("txtMsg");
+//                    System.out.println("ClientThread有保存聊天记录吗！"+currentUser.getChatRecords());
                     ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);
+                    currentUser.addRecord(msg.getMessage());
                 }else if(type == ResponseType.SHAKE){ //振动
                     Message msg = (Message)response.getData("ShakeMsg");
                     ClientUtil.appendTxt2MsgListArea(msg.getMessage(), currentUser);

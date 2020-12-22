@@ -28,12 +28,16 @@ public class User implements Serializable {
         this.head = head;
         this.mateList = new ArrayList<User>(100);
         this.chatRecords = new ArrayList<String>(300);
-        if(nickname.equals("")||nickname==null)
+
+        if(nickname.equals(""))
         {
             this.nickname = "未命名";
         }else{
             this.nickname = nickname;
         }
+        //非常重要的一步。因为如果只对chatRecords分配空间，而没有分配实际值时，对其进行readObject操作时会报错！
+        String sb = "【系统消息】用户"+ nickname + "上线了！\n";
+        this.chatRecords.add(sb);
     }
 
     public User(long id, String password){
@@ -117,15 +121,25 @@ public class User implements Serializable {
     public void addRecord(String str) {
         if(this.chatRecords == null) {
             this.chatRecords = new ArrayList<String>(300);
-//            for (int i = 0; i < 100; i++) {
-//                chatRecords.add("");
-//            }
+            String sb = "【系统消息】用户"+this.nickname + "上线了！\n";
+            this.chatRecords.add(sb);
+            System.out.println("getChatRecords: chatRecords本来为空！");
         }
         this.chatRecords.add(str);
     }
 
     public List<String> getChatRecords() {
+        if(this.chatRecords == null) {
+            this.chatRecords = new ArrayList<String>(300);
+            String sb = "【系统消息】用户"+this.nickname + "上线了！\n";
+            this.chatRecords.add(sb);
+            System.out.println("getChatRecords: chatRecords本来为空！");
+        }
         return this.chatRecords;
+    }
+
+    public void clearChatRecords() {
+        this.chatRecords = null;
     }
 
     public ImageIcon getHeadIcon(){

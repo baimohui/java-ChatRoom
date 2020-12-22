@@ -150,6 +150,10 @@ public class RequestProcessor implements Runnable {
         currentClientSocket.close();  //关闭这个客户端Socket
 
         DataBuffer.onlineUserTableModel.remove(user.getId()); //把当前下线用户从在线用户表Model中删除
+        //下线消息通知给其它在线用户，但不要通知到自己
+//        for (Long id : DataBuffer.onlineUserIOCacheMap.keySet()) {
+//            sendResponse(DataBuffer.onlineUserIOCacheMap.get(id), response);
+//        }
         iteratorResponse(response);//通知所有其它在线客户端
 
         return false;  //断开监听
@@ -326,13 +330,15 @@ public class RequestProcessor implements Runnable {
         response.setData("txtMsg", msg);
 
         if (msg.getToUser() != null) { //私聊:只给私聊的对象返回响应
-            OnlineClientIOCache io = DataBuffer.onlineUserIOCacheMap.get(msg.getToUser().getId());
-            sendResponse(io, response);
+            OnlineClientIOCache io1 = DataBuffer.onlineUserIOCacheMap.get(msg.getToUser().getId());
+            OnlineClientIOCache io2 = DataBuffer.onlineUserIOCacheMap.get(msg.getFromUser().getId());
+            sendResponse(io1, response);
+            sendResponse(io2, response);
         } else {  //群聊:给除了发消息的所有客户端都返回响应
             for (Long id : DataBuffer.onlineUserIOCacheMap.keySet()) {
-                if (msg.getFromUser().getId() == id) {
-                    continue;
-                }
+//                if (msg.getFromUser().getId() == id) {
+//                    continue;
+//                }
                 sendResponse(DataBuffer.onlineUserIOCacheMap.get(id), response);
             }
         }

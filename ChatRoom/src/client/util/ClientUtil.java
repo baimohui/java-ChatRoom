@@ -60,9 +60,8 @@ public class ClientUtil {
     }
 
     public static void appendTxt2MsgListArea(String txt, User user) {
-        user.addRecord(txt);
-        UserService userService = new UserService();
-        userService.saveUser(user);
+//        user.addRecord(txt);
+//        System.out.println("聊天记录更新："+user.getChatRecords());
         ChatFrame.msgListArea.append(txt);
         //把光标定位到文本域的最后一行
         ChatFrame.msgListArea.setCaretPosition(ChatFrame.msgListArea.getDocument().getLength());
