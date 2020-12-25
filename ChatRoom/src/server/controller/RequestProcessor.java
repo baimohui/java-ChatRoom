@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static client.DataBuffer.currentUser;
 import static server.DataBuffer.matesList;
 
 /**
@@ -150,7 +151,7 @@ public class RequestProcessor implements Runnable {
         currentClientSocket.close();  //关闭这个客户端Socket
 
         DataBuffer.onlineUserTableModel.remove(user.getId()); //把当前下线用户从在线用户表Model中删除
-        //下线消息通知给其它在线用户，但不要通知到自己
+//        //下线消息通知给其它在线用户，但不要通知到自己
 //        for (Long id : DataBuffer.onlineUserIOCacheMap.keySet()) {
 //            sendResponse(DataBuffer.onlineUserIOCacheMap.get(id), response);
 //        }
@@ -263,14 +264,6 @@ public class RequestProcessor implements Runnable {
         response.setStatus(ResponseStatus.OK);
         response.setData("sendMix",sendMix);
 
-        // 存储好友列表信息到数据库中
-        User testUser1 = sendMix.getFromUser();
-        User testUser2 = sendMix.getToUser();
-        testUser1.addMate(testUser2);
-        testUser2.addMate(testUser1);
-        UserService userService = new UserService();
-        userService.saveUser(testUser1, testUser2);
-
         List<User> mateList = matesList.get(fromUserId-1);
         mateList.add(sendMix.getToUser());
         matesList.set(fromUserId-1, mateList);
@@ -310,13 +303,22 @@ public class RequestProcessor implements Runnable {
         matesList.set(toUserId-1, mateList2);
         response.setData("matesList", matesList);
 
-        System.out.println("接收方添加的好友为"+matesList.get(toUserId-1));
-        System.out.println("发送方添加的好友为"+matesList.get(fromUserId-1));
+        System.out.println("接收方当前好友为"+matesList.get(toUserId-1));
+        System.out.println("发送方当前好友为"+matesList.get(fromUserId-1));
 
         OnlineClientIOCache sendIO1 = DataBuffer.onlineUserIOCacheMap.get(sendDelMix.getFromUser().getId());
-        OnlineClientIOCache sendIO2 = DataBuffer.onlineUserIOCacheMap.get(sendDelMix.getToUser().getId());
         this.sendResponse(sendIO1, response);
-        this.sendResponse(sendIO2, response);
+
+        // 考虑到要删除的好友可能不在线
+        User offlineUser = sendDelMix.getToUser();
+        if (DataBuffer.onlineUsersMap.containsKey(offlineUser.getId())) { //要删除的用户已经登录了
+            OnlineClientIOCache sendIO2 = DataBuffer.onlineUserIOCacheMap.get(offlineUser.getId());
+            this.sendResponse(sendIO2, response);
+        } else { //如果要删除的对象不在线，则要单独对其mateList进行更新保存
+            offlineUser.delMate(sendDelMix.getFromUser());
+            UserService userService = new UserService();
+            userService.saveUser(offlineUser);
+        }
     }
 
     /**

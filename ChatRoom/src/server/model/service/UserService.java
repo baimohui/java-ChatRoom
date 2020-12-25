@@ -103,15 +103,8 @@ public class UserService {
                             DataBuffer.configProp.getProperty("dbpath")));
             Object obj;
             obj = ois.readObject();
-            System.out.println("输入流："+obj);
-            while(obj!=null) {
-                list = (List<User>) obj;
-                System.out.println("obj:"+obj);
-                System.out.println("list:"+list);
-                //这里一定要补上break，不然会出现readObject()方法的EOF异常。
-                // 在成功读取对象之后，还会再读一次，因为一次性就已经全部读出，此时已经没有东西可读，所以只能对其中断。
-                break;
-            };
+            list = (List<User>) obj;
+
         } catch (Exception e) {
             System.out.println("果然是这里读取失败了2");
             e.printStackTrace();
@@ -129,7 +122,6 @@ public class UserService {
                             DataBuffer.configProp.getProperty("dbpath")));
             //写回用户信息
             oos.writeObject(users);
-//            oos.writeObject(null);
             oos.flush();
         } catch (Exception e) {
             System.out.println("saveAllUser ERROR!!!");

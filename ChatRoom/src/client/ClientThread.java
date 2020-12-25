@@ -155,6 +155,8 @@ public class ClientThread extends Thread {
 
             if(currentUser.getId()==sendDelMix.getFromUser().getId()) {
                 MatesListModel matesListModel2 = matesListModels.get(fromUserId-1);
+//                System.out.println(sendDelMix.getFromUser().getNickname()+"当前真实好友列表为"+currentUser.getMateList());
+                // 对matesListModels的修改也连同修改了currentUser的mateList，具体可看其源码
                 matesListModel2.removeElement(sendDelMix.getToUser());
                 matesListModels.set(fromUserId-1, matesListModel2);
                 System.out.println(sendDelMix.getFromUser().getNickname()+"当前好友列表为"+matesListModel2.getmateList());

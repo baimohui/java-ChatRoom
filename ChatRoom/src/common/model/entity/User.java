@@ -123,7 +123,6 @@ public class User implements Serializable {
             this.chatRecords = new ArrayList<String>(300);
             String sb = "【系统消息】用户"+this.nickname + "上线了！\n";
             this.chatRecords.add(sb);
-            System.out.println("getChatRecords: chatRecords本来为空！");
         }
         this.chatRecords.add(str);
     }
@@ -133,7 +132,6 @@ public class User implements Serializable {
             this.chatRecords = new ArrayList<String>(300);
             String sb = "【系统消息】用户"+this.nickname + "上线了！\n";
             this.chatRecords.add(sb);
-            System.out.println("getChatRecords: chatRecords本来为空！");
         }
         return this.chatRecords;
     }
